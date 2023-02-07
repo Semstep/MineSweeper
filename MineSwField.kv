@@ -1,0 +1,34 @@
+#: import cfg MineSwConfig
+
+<TopMenu>
+#    orientation: 'horizontal'
+#    canvas:
+#        Color:
+#            rgb: cfg.TOP_BG_COLOR
+#        Rectangle:
+#            size: self.size
+#            pos: self.pos
+    Button:
+    Button:
+    Button:
+
+<GameField>
+#    canvas:
+#        Color:
+#            rgb: cfg.FIELD_BG_COLOR
+#        Rectangle:
+#            size: self.size
+#            pos: self.pos
+
+<MineSwScreen>
+    orientation: 'vertical'
+    canvas:
+        Color:
+            rgb: cfg.FORM_BG_COLOR
+        Rectangle:
+            size: self.size
+            pos: self.pos
+#    TopMenu:
+    GameField:
+
+
