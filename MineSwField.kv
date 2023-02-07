@@ -1,34 +1,42 @@
 #: import cfg MineSwConfig
+<Cell>
+    text: ''
+    on_release:
 
 <TopMenu>
-#    orientation: 'horizontal'
-#    canvas:
-#        Color:
-#            rgb: cfg.TOP_BG_COLOR
-#        Rectangle:
-#            size: self.size
-#            pos: self.pos
+    orientation: 'horizontal'
+    canvas.before:
+        Color:
+            rgb: cfg.TOP_BG_COLOR
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    size_hint_y: None
+    height: (dp(40))
     Button:
     Button:
     Button:
 
-<GameField>
-#    canvas:
-#        Color:
-#            rgb: cfg.FIELD_BG_COLOR
-#        Rectangle:
-#            size: self.size
-#            pos: self.pos
+<MineField>
+    canvas.before:
+        Color:
+            rgb: cfg.FIELD_BG_COLOR
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    cols: cfg.FIELD_COLNUM
+    rows: cfg.FIELD_ROWNUM
+    padding: dp(20)
 
-<MineSwScreen>
+<MineSweepScreen>
     orientation: 'vertical'
-    canvas:
+    canvas.before:
         Color:
             rgb: cfg.FORM_BG_COLOR
         Rectangle:
             size: self.size
             pos: self.pos
-#    TopMenu:
-    GameField:
+    TopMenu:
+    MineField:
 
 
