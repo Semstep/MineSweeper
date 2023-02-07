@@ -1,4 +1,4 @@
-from View.myscreen import MyScreenView
+from View.MineSweeperView import MyScreenView
 
 
 class MineSweeperController:

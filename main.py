@@ -1,7 +1,7 @@
 from kivy.app import App
 
 from Controller.myscreen import MyScreenController
-from Model.myscreen import MyScreenModel
+from Model.MineSweeperModel import MyScreenModel
 
 
 class MineSweeperMain(App):
