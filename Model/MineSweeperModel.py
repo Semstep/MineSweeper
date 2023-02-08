@@ -62,7 +62,6 @@ class MineSweepModel:
             for j in range(cfg.FIELD_ROWNUM):
                 minefield_row.append(Cell(i, j))
 
-
     def add_observer(self, observer):
         self._observers.append(observer)
 
@@ -72,3 +71,10 @@ class MineSweepModel:
     def notify_observers(self):
         for x in self._observers:
             x.model_is_changed()
+
+    def on_field_open(self, *args):
+        print('Opened', {args})
+        ...
+
+    def on_field_mark(self, *args):
+        print('Marked', {args})

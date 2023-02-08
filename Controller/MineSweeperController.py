@@ -1,4 +1,5 @@
-from View.MineSweeperView import MyScreenView
+# from View.MineSweeperView import MyScreenView
+from View.MineSweeperView import MineSweepScreen
 
 
 class MineSweeperController:
@@ -15,9 +16,12 @@ class MineSweeperController:
         The constructor takes a reference to the model.
         The constructor creates the view.
         """
+        # ! Странно, что этот класс не добавляется в модель как наблюдаемый
+        self.model = model
+        self.view = MineSweepScreen(
+            controller=self, model=self.model)  # инициализируем оба kivy.OblectProperty в классе view
 
     def get_screen(self):
         """The method creates get the view."""
-        ...
-        # return self.view
+        return self.view
 
