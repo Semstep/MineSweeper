@@ -7,7 +7,25 @@ from kivy.uix.button import Button
 import MineSwConfig as cfg
 from kivy.core.window import Window
 
-Builder.load_file('View/MineSweeperScreen.kv')
+Builder.load_file('View\\MineSweeperScreen.kv')
+
+
+class Cell(Button):
+    _states = ['opened', 'closed', 'flagged', 'quested']  # закрыта, открыта, с флажком, с вопросиком
+    col: int
+    row: int
+    cellstate: str
+    is_mined: bool
+
+    def __init__(self, self_col, self_row, **kwargs):
+        super().__init__(**kwargs)
+        self.col, self.row = self_col, self_row
+        self.cellstate = 'closed'
+        self.is_mined = False
+
+    def on_release(self, *args):
+        print(self.col, self.row)
+        self.disabled = True
 
 
 class TopMenu(BoxLayout):
