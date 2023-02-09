@@ -14,13 +14,15 @@ from Utility.observer import Observer
 Builder.load_file(os.path.join(os.path.dirname(__file__), "MineSweeperScreen.kv"))
 
 
+class CellView(Button):
+    text = 'A'
+
+
 class TopMenu(BoxLayout):
     ...
 
 
 class MineField(GridLayout):
-    # cols = cfg.FIELD_COLNUM
-    # rows = cfg.FIELD_ROWNUM
     fld_repr = ListProperty()
 
     def __init__(self, **kwargs):
@@ -32,7 +34,7 @@ class MineField(GridLayout):
         self.cols, self.rows = len(self.fld_repr), len(self.fld_repr[0])
         for i in range(self.rows):
             for j in range(self.cols):
-                self.add_widget(Button())
+                self.add_widget(CellView())
         print(f'field of {self.rows}, {self.cols} created')
 
 
@@ -49,9 +51,6 @@ class MineSweepScreen(Observer, BoxLayout):
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        # fld = self.model.get_field()
-        # self.children[0].create_field(fld)
-
         self.model.add_observer(self)  # register the view as an observer
 
 
