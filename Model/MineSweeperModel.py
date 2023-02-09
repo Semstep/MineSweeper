@@ -61,6 +61,8 @@ class MineSweepModel:
             minefield_row = []
             for j in range(cfg.FIELD_ROWNUM):
                 minefield_row.append(Cell(i, j))
+            self.minefield.append(minefield_row)
+        print('Model of field created')
 
     def add_observer(self, observer):
         self._observers.append(observer)
@@ -78,3 +80,6 @@ class MineSweepModel:
 
     def on_field_mark(self, *args):
         print('Marked', {args})
+
+    def get_field(self):
+        return self.minefield
