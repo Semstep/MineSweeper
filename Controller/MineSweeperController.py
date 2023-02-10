@@ -20,7 +20,8 @@ class MineSweeperController:
         self.gamefield = self.model.minefield
         self.view = MineSweepScreen(
             controller=self, model=self.model)  # инициализируем оба kivy.OblectProperty в классе view
-        # self.gamefield_view =
+
+
 
     def get_screen(self):
         """The method creates get the view."""

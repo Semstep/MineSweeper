@@ -17,9 +17,13 @@ class FieldCell(Button):
     id: tuple
     ctr = 0
 
-    def __init__(self, id, **kw):
+    def __init__(self, id, cell, **kw):
         super().__init__(**kw)
         self.id = id
+        if cell.is_mine():
+            self.text = 'M'
+        else:
+            self.text = cell.mined_neibs_cnt
 
     def on_press(self):
         # # print('Button:', self.last_touch.button)  # last_touch буфер для события тача
@@ -42,7 +46,7 @@ class MineField(GridLayout):
         self.rows = len(gamefield[0])
         for row in gamefield:
             for cell in row:
-                self.add_widget(FieldCell(self.controller.get_cell_id(cell)))
+                self.add_widget(FieldCell(self.controller.get_cell_id(cell), cell))  # ! это убрать после экспериментов
         print('field widget created')
 
 
