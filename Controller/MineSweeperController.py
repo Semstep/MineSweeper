@@ -32,4 +32,10 @@ class MineSweeperController:
     def get_cell_id(self, cell):
         return self.model.get_cell_id(cell)
 
+    def act_opencell(self, cell_id: tuple):
+        self.model.on_opencell(cell_id)
+
+    def act_markcell(self, cell_id: tuple):
+        self.model.on_markcell(cell_id)
+
 

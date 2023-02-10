@@ -54,6 +54,7 @@ class MineSweepModel:
     MyScreenModel class task is to add two numbers.
     """
     minefield: list = []
+    cell_last_changed: list = []
 
     def __init__(self):
         self._observers = []
@@ -74,12 +75,11 @@ class MineSweepModel:
         for x in self._observers:
             x.model_is_changed()
 
-    def on_field_open(self, *args):
-        print('Opened', {args})
-        ...
+    def on_opencell(self, cell_id):
+        print('Model: Opened', *cell_id)
 
-    def on_field_mark(self, *args):
-        print('Marked', {args})
+    def on_markcell(self, cell_id):
+        print('Model: Marked', *cell_id)
 
     def get_field(self):
         return self.minefield

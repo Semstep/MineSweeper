@@ -5,7 +5,7 @@ from kivy.properties import ObjectProperty
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.app import Factory
+from pprint import pprint
 
 from Utility.observer import Observer
 # from Model.MineSweeperModel import MineSweepModel as model_
@@ -21,24 +21,21 @@ class FieldCell(Button):
         super().__init__(**kw)
         self.id = id
 
-    def on_touch_down(self, touch):
-        self.ctr += 1
-        print(f'{self.ctr}: {touch.button}')
-        print(touch)
-        super().on_press()
-        return True
+    def on_press(self):
+        # # print('Button:', self.last_touch.button)  # last_touch буфер для события тача
+        if self.last_touch.button == 'left':
+            self.parent.controller.act_opencell(self.id)
+        elif self.last_touch.button == 'right':
+            self.parent.controller.act_markcell(self.id)
+
 
 class TopMenu(BoxLayout):
     ...
 
 
 class MineField(GridLayout):
-    # gamefield: list
     gamefield_view: list = []
     controller = ObjectProperty()
-
-    # def __init__(self, **kwargs):
-    #     super().__init__(**kwargs)
 
     def create_field(self, gamefield):
         self.cols = len(gamefield)
