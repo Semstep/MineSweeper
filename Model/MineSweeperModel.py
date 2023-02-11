@@ -82,7 +82,7 @@ class Cell:
 class MineSweepModel:
     """
     The MyScreenModel class is a data model implementation. The model stores
-    the values of the variables `c`, `d` and their sum. The model provides an
+    the values of the variables. The model provides an
     interface through which to work with stored values. The model contains
     methods for registration, deletion and notification observers.
 

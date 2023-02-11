@@ -21,8 +21,6 @@ class MineSweeperController:
         self.view = MineSweepScreen(
             controller=self, model=self.model)  # инициализируем оба kivy.OblectProperty в классе view
 
-
-
     def get_screen(self):
         """The method creates get the view."""
         return self.view
@@ -38,5 +36,3 @@ class MineSweeperController:
 
     def act_markcell(self, cell_id: tuple):
         self.model.on_markcell(cell_id)
-
-
