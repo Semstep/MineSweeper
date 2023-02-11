@@ -35,5 +35,5 @@ class MineSweeperController:
         self.model.opencell(cell_id)
 
     def act_markcell(self, cell_id: tuple):
-        self.model.on_markcell(cell_id)
+        self.model.mark_cell(cell_id)
 

@@ -140,28 +140,36 @@ class MineSweepModel:
         for x in self._observers:
             x.model_is_changed()
 
-    def open_empthy_cells(self, cell):
+    def _open_empthy_cells(self, cell):
         if cell.status == 'opened':
             return None
+
         cell.open()
         neibs = self.get_neibs(cell)
         neibs.remove(cell)
         for c in neibs:
             if c.mined_neibs_cnt == 0:
-                self.open_empthy_cells(c)
+                self._open_empthy_cells(c)
+            else:
+                c.open()
 
     def opencell(self, cell_id):
         cell = self.get_cell(cell_id)
         if cell.has_mine:
             self.gameover = True
+
+            self.notify_observers()
             return None
         if cell.mined_neibs_cnt == 0:
-            self.open_empthy_cells(cell)
+            self._open_empthy_cells(cell)
+        cell.open()
 
         self.notify_observers()
 
-    def on_markcell(self, cell_id):
+    def mark_cell(self, cell_id):
+        self.get_cell(cell_id).change_mark()
         print('Model: Marked', *cell_id)
+        self.notify_observers()
 
     def get_field(self) -> list:
         return self.minefield
