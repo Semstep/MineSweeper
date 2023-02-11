@@ -89,25 +89,33 @@ class MineSweepModel:
     The model is (primarily) responsible for the logic of the application.
     MyScreenModel class task is to add two numbers.
     """
-    minefield: list = []
-    cell_last_changed: list = []
-    nrows = cfg.FIELD_ROWNUM
-    ncols = cfg.FIELD_COLNUM
 
     def __init__(self):
+        self.ncols, self.nrows, self.mines_num = 0, 0, 0
+        self.minefield: list = []
+        self.is_newplacement = False
+        self.gameover = False
+        self.cell_last_changed: list = []
         self._observers = []
+
+        self.init_game(cfg.FIELD_ROWNUM, cfg.FIELD_COLNUM, cfg.NUM_OF_MINES)
+
+    def init_game(self, rows_num, cols_num, mines_num):
+        self.gameover = False
+        self.nrows, self.ncols, self.mines_num = rows_num, cols_num, mines_num
+
+        self.minefield.clear()
         for rown in range(self.nrows):
             minefield_row = []
             for coln in range(self.ncols):
                 minefield_row.append(Cell(rown, coln))
             self.minefield.append(minefield_row)
         self.is_newplacement = True
+
         self._init_field()
 
-        print('field_created')
-
     def _init_field(self):
-        nums = sample(range(self.ncols * self.nrows), cfg.NUM_OF_MINES)
+        nums = sample(range(self.ncols * self.nrows), self.mines_num)
         for num in nums:
             self.get_cell_by_num(num).has_mine = True
         for r in self.get_field():
@@ -131,17 +139,24 @@ class MineSweepModel:
         for x in self._observers:
             x.model_is_changed()
 
-    def on_opencell(self, cell_id):
+    def opencell(self, cell_id):
+        cell = self.get_cell(cell_id)
+        if cell.has_mine:
+            self.gameover = True
         print('Model: Opened', *cell_id)
 
     def on_markcell(self, cell_id):
         print('Model: Marked', *cell_id)
 
-    def get_field(self):
+    def get_field(self) -> list:
         return self.minefield
 
     def get_cell_id(self, cell: Cell):
         return cell.yx
+
+    def get_cell(self, cell_yx) -> Cell:
+        row, col = cell_yx
+        return self.get_field()[row][col]
 
     def get_cell_by_num(self, num) -> Cell:
         rown = num // self.ncols
