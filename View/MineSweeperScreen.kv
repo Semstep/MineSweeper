@@ -1,7 +1,6 @@
 #: import cfg MineSwConfig
-<Cell>
-    text: ''
-    on_release:
+<FieldCell@Button>
+#    on_p:
 
 <TopMenu>
     orientation: 'horizontal'
@@ -18,14 +17,14 @@
     Button:
 
 <MineField>
-    canvas.before:
-        Color:
-            rgb: cfg.FIELD_BG_COLOR
-        Rectangle:
-            size: self.size
-            pos: self.pos
-    cols: cfg.FIELD_COLNUM
-    rows: cfg.FIELD_ROWNUM
+#    canvas.before:
+#        Color:
+#            rgb: cfg.FIELD_BG_COLOR
+#        Rectangle:
+#            size: self.size
+#            pos: self.pos
+#    cols: cfg.FIELD_COLNUM
+#    rows: cfg.FIELD_ROWNUM
     padding: dp(20)
 
 <MineSweepScreen>

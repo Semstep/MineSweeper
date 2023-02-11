@@ -1,4 +1,3 @@
-# from View.MineSweeperView import MyScreenView
 from View.MineSweeperView import MineSweepScreen
 
 
@@ -18,10 +17,26 @@ class MineSweeperController:
         """
         # ! Странно, что этот класс не добавляется в модель как наблюдаемый
         self.model = model
+        self.gamefield = self.model.minefield
         self.view = MineSweepScreen(
             controller=self, model=self.model)  # инициализируем оба kivy.OblectProperty в классе view
+
+
 
     def get_screen(self):
         """The method creates get the view."""
         return self.view
+
+    def get_gamefield(self):
+        return self.gamefield
+
+    def get_cell_id(self, cell):
+        return self.model.get_cell_id(cell)
+
+    def act_opencell(self, cell_id: tuple):
+        self.model.on_opencell(cell_id)
+
+    def act_markcell(self, cell_id: tuple):
+        self.model.on_markcell(cell_id)
+
 

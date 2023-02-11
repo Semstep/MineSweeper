@@ -7,7 +7,7 @@ from kivy.uix.button import Button
 import MineSwConfig as cfg
 from kivy.core.window import Window
 
-Builder.load_file(r'View\MineSweeperScreen.kv')
+Builder.load_file('View\\MineSweeperScreen.kv')
 
 
 class Cell(Button):

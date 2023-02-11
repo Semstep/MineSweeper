@@ -1,21 +1,35 @@
 import os
 
 from kivy.lang import Builder
-from kivy.properties import ObjectProperty, ListProperty
+from kivy.properties import ObjectProperty
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-# from Controller.MineSweeperController import
-from Model.MineSweeperModel import MineSweepModel as mdl
+from pprint import pprint
 
-import MineSwConfig as cfg
 from Utility.observer import Observer
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "MineSweeperScreen.kv"))
 
 
-class CellView(Button):
-    text = 'A'
+class FieldCell(Button):
+    id: tuple
+    ctr = 0
+
+    def __init__(self, id, cell, **kw):
+        super().__init__(**kw)
+        self.id = id
+        if cell.is_mine():
+            self.text = 'M'
+        else:
+            self.text = cell.mined_neibs_cnt
+
+    def on_press(self):
+        # # print('Button:', self.last_touch.button)  # last_touch буфер для события тача
+        if self.last_touch.button == 'left':
+            self.parent.controller.act_opencell(self.id)
+        elif self.last_touch.button == 'right':
+            self.parent.controller.act_markcell(self.id)
 
 
 class TopMenu(BoxLayout):
@@ -23,19 +37,16 @@ class TopMenu(BoxLayout):
 
 
 class MineField(GridLayout):
-    fld_repr = ListProperty()
+    gamefield_view: list = []
+    controller = ObjectProperty()
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.fld_repr = mdl.minefield
-        self.create_field()
-
-    def create_field(self):
-        self.cols, self.rows = len(self.fld_repr), len(self.fld_repr[0])
-        for i in range(self.rows):
-            for j in range(self.cols):
-                self.add_widget(CellView())
-        print(f'field of {self.rows}, {self.cols} created')
+    def create_field(self, gamefield):
+        self.cols = len(gamefield)
+        self.rows = len(gamefield[0])
+        for row in gamefield:
+            for cell in row:
+                self.add_widget(FieldCell(self.controller.get_cell_id(cell), cell))  # ! это убрать после экспериментов
+        print('field widget created')
 
 
 class MineSweepScreen(Observer, BoxLayout):
@@ -51,8 +62,10 @@ class MineSweepScreen(Observer, BoxLayout):
 
     def __init__(self, **kw):
         super().__init__(**kw)
+        mf = self.get_child('MineField')
+        mf.controller = self.controller
+        mf.create_field(self.controller.get_gamefield())
         self.model.add_observer(self)  # register the view as an observer
-
 
     def model_is_changed(self, *args):
         """
@@ -61,5 +74,9 @@ class MineSweepScreen(Observer, BoxLayout):
         """
         ...
 
-
-
+    def get_child(self, cls_name):
+        for c in self.children:
+            if cls_name in c.__class__.__name__:
+                return c
+        return None
+# class MineSweepScreen():

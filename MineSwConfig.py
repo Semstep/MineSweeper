@@ -4,6 +4,12 @@ FIELD_Y_SIZE = 10
 
 TOP_BG_COLOR = (.2, .2, .2)
 FIELD_BG_COLOR = (.3, .3, .3)
+# FIELD_BG_COLOR = (.1, 1, 1)
 
-FIELD_COLNUM = 10
-FIELD_ROWNUM = 10
+LEVEL = 'amateur'
+
+# Новичек: 8х8 10 мин (6.4), Любитель: 16х16 40 мин (6.4), Профи: 30х16 99мин (4.85).
+LEVELS = {'newbie': (8, 8, 10), 'amateur': (16, 16, 40), 'profi': (30, 16, 99)}
+
+FIELD_COLNUM, FIELD_ROWNUM, NUM_OF_MINES = LEVELS[LEVEL]
+

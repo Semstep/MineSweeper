@@ -6,18 +6,20 @@
 # method). For this, observers must be descendants of an abstract class,
 # inheriting which, the `model_is_changed` method must be overridden.
 import MineSwConfig as cfg
+from random import sample
 
 class Cell:
     _statuses = ['opened', 'closed', 'flagged', 'quested']  # закрыта, открыта, с флажком, с вопросиком
-    col: int
-    row: int
+    xy: tuple
     status: str
     is_mined: bool
+    mined_neibs_cnt: int
 
     def __init__(self, self_col, self_row):
-        self.col, self.row = self_col, self_row
+        self.xy = (self_col, self_row, )
         self.status = 'closed'
         self.is_mined = False
+        self.mined_neibs_cnt = 0
 
     def check_status(self, new_status: str):
         return True if new_status in self._statuses else False
@@ -43,6 +45,12 @@ class Cell:
     def set_mined(self):
         self.is_mined = True
 
+    def get_xy(self):
+        return self.xy
+
+    def __repr__(self):
+        return f'Cell {self.xy}'
+
 class MineSweepModel:
     """
     The MyScreenModel class is a data model implementation. The model stores
@@ -54,15 +62,42 @@ class MineSweepModel:
     MyScreenModel class task is to add two numbers.
     """
     minefield: list = []
+    cell_last_changed: list = []
+    nrows = cfg.FIELD_ROWNUM
+    ncols = cfg.FIELD_COLNUM
 
     def __init__(self):
         self._observers = []
-        for i in range(cfg.FIELD_COLNUM):
+        for i in range(self.ncols):
             minefield_row = []
-            for j in range(cfg.FIELD_ROWNUM):
+            for j in range(self.nrows):
                 minefield_row.append(Cell(i, j))
             self.minefield.append(minefield_row)
-        print('Model of field created')
+        self.is_newplacement = True
+
+        self._place_mines()
+
+        # for row in self.get_field():
+        #     for cell in row:
+        #         if cell.is_mine():
+        #             continue
+        #         cell.mined_neibs_cnt = self._count_neighbours(cell)
+
+        print('field_created')
+
+    def _place_mines(self):
+        nums = sample(range(self.ncols * self.nrows), cfg.NUM_OF_MINES)
+        for num in nums:
+            self.get_cell_by_num(num).is_mined = True
+
+    def _count_neighbours(self, cell: Cell):
+        cellx, celly = cell.get_xy()
+        neibs = self.get_field()[cellx-1:cellx+1][celly-1:celly+1]
+        return sum(neibs) - cell.is_mine()
+
+    def get_neibs(self, cell):
+        cellx, celly = cell.get_xy()
+        return self.get_field()[cellx-1:cellx+1][celly-1:celly+1]
 
     def add_observer(self, observer):
         self._observers.append(observer)
@@ -74,12 +109,24 @@ class MineSweepModel:
         for x in self._observers:
             x.model_is_changed()
 
-    def on_field_open(self, *args):
-        print('Opened', {args})
-        ...
+    def on_opencell(self, cell_id):
+        print('Model: Opened', *cell_id)
 
-    def on_field_mark(self, *args):
-        print('Marked', {args})
+    def on_markcell(self, cell_id):
+        print('Model: Marked', *cell_id)
 
     def get_field(self):
         return self.minefield
+
+    def get_cell_id(self, cell: Cell):
+        return cell.get_xy()
+
+    def get_cell_by_num(self, num) -> Cell:
+        ypos = num // self.nrows
+        xpos = num % self.ncols
+        return self.minefield[xpos][ypos]
+
+
+if __name__ == '__main__':
+    model = MineSweepModel()
+    print(model.get_neibs(model.get_cell_by_num(17)))
