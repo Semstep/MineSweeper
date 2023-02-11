@@ -63,6 +63,7 @@ class Cell:
     def open(self):
         if self.status == 'closed':
             self.status = 'opened'
+            print('Model: Opened', self)
             return True
         return False
 
@@ -140,7 +141,9 @@ class MineSweepModel:
             x.model_is_changed()
 
     def open_empthy_cells(self, cell):
-        cell.status = 'opened'
+        if cell.status == 'opened':
+            return None
+        cell.open()
         neibs = self.get_neibs(cell)
         neibs.remove(cell)
         for c in neibs:
@@ -156,7 +159,6 @@ class MineSweepModel:
             self.open_empthy_cells(cell)
 
         self.notify_observers()
-        print('Model: Opened', *cell_id)
 
     def on_markcell(self, cell_id):
         print('Model: Marked', *cell_id)

@@ -48,6 +48,9 @@ class MineField(GridLayout):
                 self.add_widget(FieldCell(cell))
         print('field widget created')
 
+    def refresh(self):
+        print('View: refreshed')
+
 
 class MineSweepScreen(Observer, BoxLayout):
     """
@@ -59,12 +62,14 @@ class MineSweepScreen(Observer, BoxLayout):
     controller = ObjectProperty()
     # <Model.myscreen.MyScreenModel object>.
     model = ObjectProperty()
+    minefield = ObjectProperty()
 
     def __init__(self, **kw):
         super().__init__(**kw)
         mf = self.get_child('MineField')
         mf.controller = self.controller
         mf.create_field(self.controller.get_gamefield())
+        self.minefield = mf
         self.model.add_observer(self)  # register the view as an observer
 
     def model_is_changed(self, *args):
@@ -72,7 +77,7 @@ class MineSweepScreen(Observer, BoxLayout):
         The method is called when the model changes.
         Requests and displays the value of the sum.
         """
-        ...
+        self.minefield.refresh()
 
     def get_child(self, cls_name):
         for c in self.children:
