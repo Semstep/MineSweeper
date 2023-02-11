@@ -23,7 +23,6 @@ class FieldCell(Button):
         self.model_cell = cell
 
     def on_press(self):
-        # # print('Button:', self.last_touch.button)  # last_touch буфер для события тача
         if self.last_touch.button == 'left':
             self.parent.controller.act_opencell(self.model_cell.yx)
         elif self.last_touch.button == 'right':
@@ -31,11 +30,15 @@ class FieldCell(Button):
 
 
 class TopMenu(BoxLayout):
-    ...
+    controller = ObjectProperty()
+    minecnt = ObjectProperty()
+    gamestatus = ObjectProperty()
+
+    def show_remaining(self, remains):
+        self.minecnt.text = str(remains)
 
 
 class MineField(GridLayout):
-    controller = ObjectProperty()
 
     def create_field(self, gamefield):
         self.rows = len(gamefield)
@@ -80,15 +83,19 @@ class MineSweepScreen(Observer, BoxLayout):
 
     """
     # Оба ObjectProperty прилетают при инициализации этого view в контроллере
-    # <Controller.myscreen_controller.MyScreenController object>
     controller = ObjectProperty()
-    # <Model.myscreen.MyScreenModel object>.
     model = ObjectProperty()
+
     minefield = ObjectProperty()
+    topmenu = ObjectProperty()
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        mf = self.get_child('MineField')
+        mf = self.get_subclass(MineField)
+        tm = self.get_subclass(TopMenu)
+        self.topmenu = tm
+        tm.controller = self.controller
+        tm.minecnt.text = str(self.model.mines_remain)
         mf.controller = self.controller
         mf.create_field(self.controller.get_gamefield())
         self.minefield = mf
@@ -97,13 +104,13 @@ class MineSweepScreen(Observer, BoxLayout):
     def model_is_changed(self, *args):
         """
         The method is called when the model changes.
-        Requests and displays the value of the sum.
         """
         self.minefield.refresh(self.model.gameover)
+        self.topmenu.minecnt.text = str(self.model.mines_remain)
 
-    def get_child(self, cls_name):
+        self.topmenu.gamestatus.text = 'КРОСАВЧЕГ' if self.model.is_win else ''
+
+    def get_subclass(self, cls):
         for c in self.children:
-            if cls_name in c.__class__.__name__:
+            if isinstance(c, cls):
                 return c
-        return None
-# class MineSweepScreen():

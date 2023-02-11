@@ -13,3 +13,4 @@ LEVELS = {'newbie': (8, 8, 10), 'amateur': (16, 16, 40), 'profi': (30, 16, 99), 
 
 FIELD_ROWNUM, FIELD_COLNUM, NUM_OF_MINES = LEVELS[LEVEL]
 
+# Если попал на мину и потом пытаюсь правой кнопкой на неоткрытой, попадаю на свой эксепшн

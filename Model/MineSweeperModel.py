@@ -68,13 +68,13 @@ class Cell:
         return False
 
     def change_mark(self):
-        if self.status == 'opened':
-            return False
-        nextidx = self._statuses.index(self.status) + 1
-        if nextidx >= len(self._statuses):
-            nextidx = 1
-        self.status = self._statuses[nextidx]
-        return True
+        if self.status != 'opened':
+            nextidx = self._statuses.index(self.status) + 1
+            if nextidx >= len(self._statuses):
+                nextidx = 1
+            self.status = self._statuses[nextidx]
+            return self.status
+        raise ValueError("opened cell can't be marked")
 
     def __repr__(self):
         return f'Cell {self.yx}'
@@ -92,18 +92,21 @@ class MineSweepModel:
     """
 
     def __init__(self):
+        self.is_win = False
         self.ncols, self.nrows, self.mines_num = 0, 0, 0
         self.minefield: list = []
         self.is_newplacement = False
         self.gameover = False
         self.cell_last_changed: list = []
         self._observers = []
-
+        self.mines_remain = 0
         self.init_game(cfg.FIELD_ROWNUM, cfg.FIELD_COLNUM, cfg.NUM_OF_MINES)
+
 
     def init_game(self, rows_num, cols_num, mines_num):
         self.gameover = False
         self.nrows, self.ncols, self.mines_num = rows_num, cols_num, mines_num
+        self.mines_remain = self.mines_num
 
         self.minefield.clear()
         for rown in range(self.nrows):
@@ -166,8 +169,25 @@ class MineSweepModel:
 
         self.notify_observers()
 
+    def test_win(self):
+        for row in self.get_field():
+            for cell in row:
+                if cell.status == 'flagged' and not cell.has_mine:
+                    return False
+        return True
+
     def mark_cell(self, cell_id):
-        self.get_cell(cell_id).change_mark()
+        prevstate = self.get_cell(cell_id).status
+        state = self.get_cell(cell_id).change_mark()
+        if prevstate == 'flagged' and prevstate != state:
+            self.mines_remain += 1
+        elif prevstate != 'flagged' and state == 'flagged':
+            self.mines_remain -= 1
+        if self.mines_remain == 0:
+            if self.test_win():
+                self.is_win = True
+        else:
+            self.is_win = False
         print('Model: Marked', *cell_id)
         self.notify_observers()
 
