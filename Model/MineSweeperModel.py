@@ -139,10 +139,23 @@ class MineSweepModel:
         for x in self._observers:
             x.model_is_changed()
 
+    def open_empthy_cells(self, cell):
+        cell.status = 'opened'
+        neibs = self.get_neibs(cell)
+        neibs.remove(cell)
+        for c in neibs:
+            if c.mined_neibs_cnt == 0:
+                self.open_empthy_cells(c)
+
     def opencell(self, cell_id):
         cell = self.get_cell(cell_id)
         if cell.has_mine:
             self.gameover = True
+            return None
+        if cell.mined_neibs_cnt == 0:
+            self.open_empthy_cells(cell)
+
+        self.notify_observers()
         print('Model: Opened', *cell_id)
 
     def on_markcell(self, cell_id):
