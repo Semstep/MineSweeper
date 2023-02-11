@@ -11,15 +11,50 @@ from pprint import pprint
 
 class Cell:
     _statuses = ['opened', 'closed', 'flagged', 'quested']  # закрыта, открыта, с флажком, с вопросиком
-    yx: tuple
-    status: str
-    is_mined: bool
-    mined_neibs_cnt: int
+    _yx: tuple
+    _status: str
+    _is_mined: bool
+    _mined_neibs_cnt: int
+
+    @property
+    def yx(self):
+        return self._yx
+
+    @yx.setter
+    def yx(self, val):
+        self._yx = val
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, val):
+        if val in self._statuses:
+            self._status = val
+        else:
+            raise ValueError(f'Статус должен быть одним из {self._statuses}')
+
+    @property
+    def has_mine(self):
+        return self._is_mined
+
+    @has_mine.setter
+    def has_mine(self, value):
+        self._is_mined = value
+
+    @property
+    def mined_neibs_cnt(self):
+        return self._mined_neibs_cnt
+
+    @mined_neibs_cnt.setter
+    def mined_neibs_cnt(self, value):
+        self._mined_neibs_cnt = value
 
     def __init__(self, self_row, self_col):
         self.yx = (self_row, self_col, )
         self.status = 'closed'
-        self.is_mined = False
+        self.has_mine = False
         self.mined_neibs_cnt = 0
 
     def check_status(self, new_status: str):
@@ -40,17 +75,9 @@ class Cell:
         self.status = self._statuses[nextidx]
         return True
 
-    def has_mine(self):
-        return self.is_mined
-
-    def set_mined(self):
-        self.is_mined = True
-
-    def get_yx(self):
-        return self.yx
-
     def __repr__(self):
         return f'Cell {self.yx}'
+
 
 class MineSweepModel:
     """
@@ -82,16 +109,16 @@ class MineSweepModel:
     def _init_field(self):
         nums = sample(range(self.ncols * self.nrows), cfg.NUM_OF_MINES)
         for num in nums:
-            self.get_cell_by_num(num).is_mined = True
+            self.get_cell_by_num(num).has_mine = True
         for r in self.get_field():
             for c in r:
                 c.mined_neibs_cnt = self._count_neighbours(c)
 
     def _count_neighbours(self, cell: Cell) -> int:
-        return sum([m.has_mine() for m in self.get_neibs(cell)]) - cell.has_mine()
+        return sum([m.has_mine for m in self.get_neibs(cell)]) - cell.has_mine
 
     def get_neibs(self, cell: Cell):
-        celly, cellx = cell.get_yx()
+        celly, cellx = cell.yx
         return [cl for rows in self.get_field()[max(0, celly-1):celly+2] for cl in rows[max(0, cellx-1):cellx+2]]
 
     def add_observer(self, observer):
@@ -114,7 +141,7 @@ class MineSweepModel:
         return self.minefield
 
     def get_cell_id(self, cell: Cell):
-        return cell.get_yx()
+        return cell.yx
 
     def get_cell_by_num(self, num) -> Cell:
         rown = num // self.ncols

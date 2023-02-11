@@ -18,8 +18,8 @@ class FieldCell(Button):
 
     def __init__(self, cell, **kw):
         super().__init__(**kw)
-        self.id = cell.get_yx()
-        if cell.has_mine():
+        self.id = cell.yx
+        if cell.has_mine:
             self.text = '*'
         else:
             self.text = str(cell.mined_neibs_cnt) if cell.mined_neibs_cnt else ''
