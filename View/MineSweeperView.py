@@ -11,7 +11,7 @@ import Model.MineSweeperModel
 from Utility.observer import Observer
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "MineSweeperScreen.kv"))
-
+DEBUG = True
 
 class FieldCell(Button):
     id: tuple
@@ -33,6 +33,7 @@ class TopMenu(BoxLayout):
     controller = ObjectProperty()
     minecnt = ObjectProperty()
     gamestatus = ObjectProperty()
+    gamemenu = ObjectProperty()
 
     def show_remaining(self, remains):
         self.minecnt.text = str(remains)
@@ -48,31 +49,26 @@ class MineField(GridLayout):
                 self.add_widget(FieldCell(cell))
         print('field widget created')
 
-    def refresh(self, gamover):
+    def refresh(self):
         ctr = 0
         for cell in self.children:
             if isinstance(cell, FieldCell):
                 stat = cell.model_cell.status
-                if not gamover:
-                    if stat == 'opened':
-                        if not cell.model_cell.has_mine:
-                            cell.disabled = True
-                            capt = str(cell.model_cell.mined_neibs_cnt)
-                            cell.text = capt if capt != '0' else ''
-                        else:
-                            cell.text = '*'
-                    elif stat == 'closed':
-                        cell.text = ''
-                    elif stat == 'flagged':
-                        cell.text = '!'
-                    elif stat == 'quested':
-                        cell.text = '?'
+                if stat == 'opened':
+                    if not cell.model_cell.has_mine:
+                        cell.disabled = True
+                        capt = str(cell.model_cell.mined_neibs_cnt)
+                        cell.text = capt if capt != '0' else ''
                     else:
-                        raise ValueError('Unknown field state')
-
+                        cell.text = '*'
+                elif stat == 'closed':
+                    cell.text = ''
+                elif stat == 'flagged':
+                    cell.text = '!'
+                elif stat == 'quested':
+                    cell.text = '?'
                 else:
-                    if cell.model_cell.has_mine:
-                        cell.text = 'X'
+                    raise ValueError('Unknown field state')
 
         print('View: refreshed', ctr)
 
@@ -105,10 +101,18 @@ class MineSweepScreen(Observer, BoxLayout):
         """
         The method is called when the model changes.
         """
-        self.minefield.refresh(self.model.gameover)
+        self.minefield.refresh()
         self.topmenu.minecnt.text = str(self.model.mines_remain)
+        if self.model.gameover:
+            print('---------GAMOVER------------')
+            if self.model.is_win:
+                self.topmenu.gamestatus.text = 'КРОСАВЧЕГ'
+            else:
+                self.topmenu.gamestatus.text = 'ЛУЗЕР'
 
-        self.topmenu.gamestatus.text = 'КРОСАВЧЕГ' if self.model.is_win else ''
+    def start_new_game(self):
+        self.controller.act_restart_game()
+
 
     def get_subclass(self, cls):
         for c in self.children:

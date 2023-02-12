@@ -61,11 +61,9 @@ class Cell:
         return True if new_status in self._statuses else False
 
     def open(self):
-        if self.status == 'closed':
+        if self.status != 'flagged':
             self.status = 'opened'
             print('Model: Opened', self)
-            return True
-        return False
 
     def change_mark(self):
         if self.status != 'opened':
@@ -89,26 +87,26 @@ class MineSweepModel:
 
     The model is (primarily) responsible for the logic of the application.
     MyScreenModel class task is to add two numbers.
+    Состояния игры определяем по двум фалагам: gameover и плюс is_win
     """
 
     def __init__(self):
         self.is_win = False
+        self.gameover = False
+        self.is_newplacement = False
         self.ncols, self.nrows, self.mines_num = 0, 0, 0
         self.minefield: list = []
-        self.is_newplacement = False
-        self.gameover = False
         self.cell_last_changed: list = []
-        self._observers = []
         self.mines_remain = 0
         self.init_game(cfg.FIELD_ROWNUM, cfg.FIELD_COLNUM, cfg.NUM_OF_MINES)
+        self._observers = []
 
 
     def init_game(self, rows_num, cols_num, mines_num):
-        self.gameover = False
         self.nrows, self.ncols, self.mines_num = rows_num, cols_num, mines_num
         self.mines_remain = self.mines_num
 
-        self.minefield.clear()
+        # self.minefield.clear()
         for rown in range(self.nrows):
             minefield_row = []
             for coln in range(self.ncols):
@@ -117,6 +115,9 @@ class MineSweepModel:
         self.is_newplacement = True
 
         self._init_field()
+        self.is_win, self.gameover = False, False
+        # self.notify_observers()
+
 
     def _init_field(self):
         nums = sample(range(self.ncols * self.nrows), self.mines_num)
@@ -133,62 +134,57 @@ class MineSweepModel:
         celly, cellx = cell.yx
         return [cl for rows in self.get_field()[max(0, celly-1):celly+2] for cl in rows[max(0, cellx-1):cellx+2]]
 
-    def add_observer(self, observer):
-        self._observers.append(observer)
-
-    def remove_observer(self, observer):
-        self._observers.remove(observer)
-
-    def notify_observers(self):
-        for x in self._observers:
-            x.model_is_changed()
-
-    def _open_empthy_cells(self, cell):
-        if cell.status == 'opened':
-            return None
-
+    def _open_empty_cells(self, cell):
         cell.open()
         neibs = self.get_neibs(cell)
         neibs.remove(cell)
         for c in neibs:
             if c.mined_neibs_cnt == 0:
-                self._open_empthy_cells(c)
+                if c.status == 'opened' or c.status == 'flagged':
+                    continue
+                self._open_empty_cells(c)
             else:
                 c.open()
 
     def opencell(self, cell_id):
         cell = self.get_cell(cell_id)
+        cell.open()
         if cell.has_mine:
             self.gameover = True
-
+            self.is_win = False
             self.notify_observers()
-            return None
-        if cell.mined_neibs_cnt == 0:
-            self._open_empthy_cells(cell)
-        cell.open()
-
+        else:
+            if cell.mined_neibs_cnt == 0:
+                self._open_empty_cells(cell)
+        self.test_win()
         self.notify_observers()
 
     def test_win(self):
-        for row in self.get_field():
-            for cell in row:
-                if cell.status == 'flagged' and not cell.has_mine:
-                    return False
-        return True
+        """
+        Проверяю только если количество установленных флажков == кол-ву мин
+        Если есть кроме того неоткрытые клетки, то победу не присуждаем
+        """
+        if self.mines_remain == 0:
+            for row in self.get_field():
+                for cell in row:
+                    if cell.status == 'flagged' and not cell.has_mine:
+                        return False
+                    if cell.status == 'closed':
+                        return False
+            print('Model: win detected')
+            self.gameover = self.is_win = True
 
     def mark_cell(self, cell_id):
         prevstate = self.get_cell(cell_id).status
         state = self.get_cell(cell_id).change_mark()
+        #  Подсчет непомеченных мин, чтоб не проходиться по всему полю считая флажки
         if prevstate == 'flagged' and prevstate != state:
             self.mines_remain += 1
         elif prevstate != 'flagged' and state == 'flagged':
             self.mines_remain -= 1
-        if self.mines_remain == 0:
-            if self.test_win():
-                self.is_win = True
-        else:
-            self.is_win = False
+        self.test_win()
         print('Model: Marked', *cell_id)
+
         self.notify_observers()
 
     def get_field(self) -> list:
@@ -206,6 +202,16 @@ class MineSweepModel:
         coln = num % self.ncols
         res = self.minefield[rown][coln]
         return res
+
+    def add_observer(self, observer):
+        self._observers.append(observer)
+
+    def remove_observer(self, observer):
+        self._observers.remove(observer)
+
+    def notify_observers(self):
+        for x in self._observers:
+            x.model_is_changed()
 
 
 if __name__ == '__main__':

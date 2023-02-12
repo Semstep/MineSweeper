@@ -1,4 +1,5 @@
 from View.MineSweeperView import MineSweepScreen
+import MineSwConfig as cfg
 
 
 class MineSweeperController:
@@ -32,8 +33,15 @@ class MineSweeperController:
         return self.model.get_cell_id(cell)
 
     def act_opencell(self, cell_id: tuple):
-        self.model.opencell(cell_id)
+        if not self.model.gameover:
+            self.model.opencell(cell_id)
 
     def act_markcell(self, cell_id: tuple):
-        self.model.mark_cell(cell_id)
+        if not self.model.gameover:
+            self.model.mark_cell(cell_id)
+
+    def act_restart_game(self):
+        self.model.init_game(cfg.FIELD_ROWNUM, cfg.FIELD_COLNUM, cfg.NUM_OF_MINES)
+        self.model.notify_observers()
+
 
