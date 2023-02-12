@@ -90,12 +90,13 @@ class MineSweepModel:
     The model is (primarily) responsible for the logic of the application.
     MyScreenModel class task is to add two numbers.
     Состояния игры определяем по двум фалагам: gameover и плюс is_win
+    Таймер обеспечивает модуль view или main т.к. суперцикл там
     """
 
     def __init__(self):
         self.is_win = False
         self.gameover = False
-        self.is_newplacement = False
+        self.was_no_moves = False
         self.ncols, self.nrows, self.mines_num = 0, 0, 0
         self.minefield: list = []
         self.cell_last_changed: list = []
@@ -114,14 +115,12 @@ class MineSweepModel:
             for coln in range(self.ncols):
                 minefield_row.append(Cell(rown, coln))
             self.minefield.append(minefield_row)
-        self.is_newplacement = True
+        self.was_no_moves = True
 
-        self._init_field()
+        # self._init_field()
         self.is_win, self.gameover = False, False
-        # self.notify_observers()
 
-
-    def _init_field(self):
+    def place_mines(self):
         nums = sample(range(self.ncols * self.nrows), self.mines_num)
         for num in nums:
             self.get_cell_by_num(num).has_mine = True

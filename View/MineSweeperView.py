@@ -1,18 +1,22 @@
 import os
 
 from kivy.lang import Builder
-from kivy.properties import ObjectProperty, ListProperty
+from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.clock import Clock
 from pprint import pprint
 
 import Model.MineSweeperModel
+from Controller import MineSweeperController
 from Utility.observer import Observer
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "MineSweeperScreen.kv"))
-DEBUG = True
 
+# class DeminingTimer(Label):
+#     controller = ObjectProperty()
 
 class FieldCell(Button):
     id: tuple
@@ -31,16 +35,31 @@ class FieldCell(Button):
 
 
 class TopMenu(BoxLayout):
-    controller = ObjectProperty()
+    controller: MineSweeperController = ObjectProperty()
     minecnt = ObjectProperty()
     gamestatus = ObjectProperty()
-    gamemenu = ObjectProperty()
 
-    def show_remaining(self, remains):
-        self.minecnt.text = str(remains)
+    timer = ObjectProperty()
+    timer_ctr = NumericProperty()
+    event_onesecond = ObjectProperty()
 
     def reset(self):
-        self.gamestatus.text = ''
+        self.timer_stop()
+        self.timer_ctr = 0
+        self.timer.text = '000'
+
+    def timer_start(self):
+        print('timer_started')
+        self.timer_ctr = 0
+        self.event_onesecond = Clock.schedule_interval(self.update, 1)
+
+    def timer_stop(self):
+        self.event_onesecond.cancel()
+
+    def update(self, dt):
+        self.timer_ctr += 1
+        self.timer.text = f'{self.timer_ctr:03}'
+
 
 class MineField(GridLayout):
 
@@ -78,12 +97,7 @@ class MineField(GridLayout):
                         cell.text = 'X'
         print('View: refreshed', ctr)
 
-    # def show_mines(self):
-    #     for cell in self.children:
-    #         if cell
-
     def reset(self):
-        # self.clear_widgets()
         for widg in self.children[:]:
             if isinstance(widg, FieldCell):
                 self.remove_widget(widg)
@@ -96,21 +110,22 @@ class MineSweepScreen(Observer, BoxLayout):
     """
     # Оба ObjectProperty прилетают при инициализации этого view в контроллере
     controller = ObjectProperty()
-    model = ObjectProperty()
+    model: Model.MineSweeperModel = ObjectProperty()
 
     minefield: MineField = ObjectProperty()
     topmenu = ObjectProperty()
+    timer = ObjectProperty()
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        mf = self.get_subclass(MineField)
-        tm = self.get_subclass(TopMenu)
-        self.topmenu = tm
-        tm.controller = self.controller
-        tm.minecnt.text = str(self.model.mines_remain)
-        mf.controller = self.controller
-        mf.create_field(self.controller.get_gamefield())
-        self.minefield = mf
+        self.minefield = self.get_subclass(MineField)
+        self.topmenu = self.get_subclass(TopMenu)
+
+        self.topmenu.controller = self.controller
+        self.topmenu.minecnt.text = str(self.model.mines_remain)
+        self.minefield.controller = self.controller
+        self.minefield.create_field(self.controller.get_gamefield())
+
         self.model.add_observer(self)  # register the view as an observer
 
     def model_is_changed(self, *args):
@@ -133,8 +148,8 @@ class MineSweepScreen(Observer, BoxLayout):
         self.minefield.create_field(self.controller.get_gamefield())
         self.topmenu.reset()
 
-
     def get_subclass(self, cls):
         for c in self.children:
             if isinstance(c, cls):
                 return c
+

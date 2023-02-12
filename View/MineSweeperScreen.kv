@@ -3,6 +3,7 @@
 <TopMenu>
     minecnt: minecnt
     gamestatus: gamestatus
+    timer: timer
     orientation: 'horizontal'
     canvas.before:
         Color:
@@ -17,8 +18,8 @@
     Button:
         id: gamestatus
         on_press: app.root.start_new_game()
-    Button:
-        id: gamemenu
+    Label:
+        id: timer
 
 <MineField>
 #    canvas.before:
