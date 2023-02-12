@@ -52,28 +52,35 @@ class MineField(GridLayout):
                 self.add_widget(FieldCell(cell))
         print('field widget created')
 
-    def refresh(self):
+    def refresh(self, is_looser=False):
         ctr = 0
         for cell in self.children:
             if isinstance(cell, FieldCell):
                 stat = cell.model_cell.status
-                if stat == 'opened':
-                    if not cell.model_cell.has_mine:
-                        cell.disabled = True
-                        capt = str(cell.model_cell.mined_neibs_cnt)
-                        cell.text = capt if capt != '0' else ''
+                if not is_looser:
+                    if stat == 'opened':
+                        if not cell.model_cell.has_mine:
+                            cell.disabled = True
+                            capt = str(cell.model_cell.mined_neibs_cnt)
+                            cell.text = capt if capt != '0' else ''
+                        else:
+                            cell.text = '*'
+                    elif stat == 'closed':
+                        cell.text = ''
+                    elif stat == 'flagged':
+                        cell.text = '!'
+                    elif stat == 'quested':
+                        cell.text = '?'
                     else:
-                        cell.text = '*'
-                elif stat == 'closed':
-                    cell.text = ''
-                elif stat == 'flagged':
-                    cell.text = '!'
-                elif stat == 'quested':
-                    cell.text = '?'
+                        raise ValueError('Unknown field state')
                 else:
-                    raise ValueError('Unknown field state')
-
+                    if cell.model_cell.has_mine:
+                        cell.text = 'X'
         print('View: refreshed', ctr)
+
+    # def show_mines(self):
+    #     for cell in self.children:
+    #         if cell
 
     def reset(self):
         # self.clear_widgets()
@@ -118,6 +125,7 @@ class MineSweepScreen(Observer, BoxLayout):
                 self.topmenu.gamestatus.text = 'КРОСАВЧЕГ'
             else:
                 self.topmenu.gamestatus.text = 'ЛУЗЕР'
+                self.minefield.refresh(is_looser=True)
 
     def start_new_game(self):
         self.controller.act_restart_game()

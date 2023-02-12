@@ -64,6 +64,8 @@ class Cell:
         if self.status != 'flagged':
             self.status = 'opened'
             print('Model: Opened', self)
+            return True
+        return False
 
     def change_mark(self):
         if self.status != 'opened':
@@ -148,16 +150,16 @@ class MineSweepModel:
 
     def opencell(self, cell_id):
         cell = self.get_cell(cell_id)
-        cell.open()
-        if cell.has_mine:
-            self.gameover = True
-            self.is_win = False
+        if cell.open():
+            if cell.has_mine:
+                self.gameover = True
+                self.is_win = False
+                self.notify_observers()
+            else:
+                if cell.mined_neibs_cnt == 0:
+                    self._open_empty_cells(cell)
+            self.test_win()
             self.notify_observers()
-        else:
-            if cell.mined_neibs_cnt == 0:
-                self._open_empty_cells(cell)
-        self.test_win()
-        self.notify_observers()
 
     def test_win(self):
         """
