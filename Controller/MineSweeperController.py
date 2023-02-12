@@ -50,6 +50,6 @@ class MineSweeperController:
     def start_game(self):
         self.model.was_no_moves = False
         self.model.place_mines()
-        self.view.topmenu.timer_start()
+        # self.view.topmenu.timer_start()
 
 

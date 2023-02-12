@@ -1,9 +1,11 @@
 #: import cfg MineSwConfig
+<DemineTimer>
+    text: '000'
 
 <TopMenu>
     minecnt: minecnt
     gamestatus: gamestatus
-    timer: timer
+    demine_timer: demine_timer
     orientation: 'horizontal'
     canvas.before:
         Color:
@@ -18,8 +20,8 @@
     Button:
         id: gamestatus
         on_press: app.root.start_new_game()
-    Label:
-        id: timer
+    DemineTimer:
+        id: demine_timer
 
 <MineField>
 #    canvas.before:

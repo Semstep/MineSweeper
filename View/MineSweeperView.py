@@ -15,8 +15,10 @@ from Utility.observer import Observer
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "MineSweeperScreen.kv"))
 
-# class DeminingTimer(Label):
-#     controller = ObjectProperty()
+
+class DemineTimer(Label):
+    controller = ObjectProperty()
+
 
 class FieldCell(Button):
     id: tuple
@@ -38,27 +40,29 @@ class TopMenu(BoxLayout):
     controller: MineSweeperController = ObjectProperty()
     minecnt = ObjectProperty()
     gamestatus = ObjectProperty()
+    demine_timer = ObjectProperty
 
-    timer = ObjectProperty()
-    timer_ctr = NumericProperty()
-    event_onesecond = ObjectProperty()
+    # timer = ObjectProperty()
+    # timer_ctr = NumericProperty()
+    # event_onesecond = ObjectProperty()
 
     def reset(self):
-        self.timer_stop()
-        self.timer_ctr = 0
-        self.timer.text = '000'
+        # self.timer_stop()
+        # self.timer_ctr = 0
+        # self.timer.text = '000'
+        ...
 
-    def timer_start(self):
-        print('timer_started')
-        self.timer_ctr = 0
-        self.event_onesecond = Clock.schedule_interval(self.update, 1)
-
-    def timer_stop(self):
-        self.event_onesecond.cancel()
-
-    def update(self, dt):
-        self.timer_ctr += 1
-        self.timer.text = f'{self.timer_ctr:03}'
+    # def timer_start(self):
+    #     print('timer_started')
+    #     self.timer_ctr = 0
+    #     self.event_onesecond = Clock.schedule_interval(self.update, 1)
+    #
+    # def timer_stop(self):
+    #     self.event_onesecond.cancel()
+    #
+    # def update(self, dt):
+    #     self.timer_ctr += 1
+    #     self.timer.text = f'{self.timer_ctr:03}'
 
 
 class MineField(GridLayout):
