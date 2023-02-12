@@ -13,6 +13,7 @@ from Utility.observer import Observer
 Builder.load_file(os.path.join(os.path.dirname(__file__), "MineSweeperScreen.kv"))
 DEBUG = True
 
+
 class FieldCell(Button):
     id: tuple
     ctr = 0
@@ -38,6 +39,8 @@ class TopMenu(BoxLayout):
     def show_remaining(self, remains):
         self.minecnt.text = str(remains)
 
+    def reset(self):
+        self.gamestatus.text = ''
 
 class MineField(GridLayout):
 
@@ -72,6 +75,12 @@ class MineField(GridLayout):
 
         print('View: refreshed', ctr)
 
+    def reset(self):
+        # self.clear_widgets()
+        for widg in self.children[:]:
+            if isinstance(widg, FieldCell):
+                self.remove_widget(widg)
+
 
 class MineSweepScreen(Observer, BoxLayout):
     """
@@ -82,7 +91,7 @@ class MineSweepScreen(Observer, BoxLayout):
     controller = ObjectProperty()
     model = ObjectProperty()
 
-    minefield = ObjectProperty()
+    minefield: MineField = ObjectProperty()
     topmenu = ObjectProperty()
 
     def __init__(self, **kw):
@@ -112,6 +121,9 @@ class MineSweepScreen(Observer, BoxLayout):
 
     def start_new_game(self):
         self.controller.act_restart_game()
+        self.minefield.reset()
+        self.minefield.create_field(self.controller.get_gamefield())
+        self.topmenu.reset()
 
 
     def get_subclass(self, cls):

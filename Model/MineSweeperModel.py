@@ -106,7 +106,7 @@ class MineSweepModel:
         self.nrows, self.ncols, self.mines_num = rows_num, cols_num, mines_num
         self.mines_remain = self.mines_num
 
-        # self.minefield.clear()
+        self.minefield.clear()
         for rown in range(self.nrows):
             minefield_row = []
             for coln in range(self.ncols):
