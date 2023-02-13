@@ -4,6 +4,11 @@ from Controller.MineSweeperController import MineSweeperController
 from Model.MineSweeperModel import MineSweepModel
 from kivy.utils import platform
 
+# from kivy.config import Config
+
+# Config.set('graphics', 'width', '480')
+# Config.set('graphics', 'height', '640')
+
 if platform not in ['android', 'ios']:
     # Dispose of that nasty red dot
     from kivy.config import Config

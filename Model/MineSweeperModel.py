@@ -8,6 +8,9 @@
 import MineSwConfig as cfg
 from random import sample
 from pprint import pprint
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 class Cell:
     _statuses = ['opened', 'closed', 'flagged', 'quested']  # закрыта, открыта, с флажком, с вопросиком
@@ -63,7 +66,7 @@ class Cell:
     def open(self):
         if self.status != 'flagged':
             self.status = 'opened'
-            print('Model: Opened', self)
+            logging.debug(f'Model: Opened {self}')
             return True
         return False
 
@@ -168,7 +171,7 @@ class MineSweepModel:
                 for cell in row:
                     if cell.status == 'flagged' and not cell.has_mine:
                         return False
-                    if cell.status == 'closed':
+                    if cell.status in ('closed', 'quested'):
                         return False
             print('Model: win detected')
             self.gameover = self.is_win = True

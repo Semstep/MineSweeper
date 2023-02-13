@@ -1,6 +1,11 @@
 #: import cfg MineSwConfig
 <DemineTimer>
+    font_size: dp(30)
+    color: 1,0,0
     text: '000'
+
+<MenuButton>
+
 
 <TopMenu>
     minecnt: minecnt
@@ -15,6 +20,19 @@
             pos: self.pos
     size_hint_y: None
     height: (dp(40))
+#    Button:
+    Image:
+        source: 'assets/config_ico.png'
+#            size: root.size
+#            x: root.pos[0]
+        y: root.pos[1] - root.height
+#            allow_stretch: False
+#            keep_ratio: True
+
+#            y: root.y
+#            x: root.x
+#        size_hint_x: None
+#        width: self.height * 2
     Button:
         id: minecnt
     Button:
