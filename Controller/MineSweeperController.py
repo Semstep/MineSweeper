@@ -38,10 +38,18 @@ class MineSweeperController:
             self.start_game()
         if not self.model.gameover:
             self.model.opencell(cell_id)
+        if self.model.gameover:  # значение флажка может поменяться после открытия клетки
+            self.stop_game()
 
     def act_markcell(self, cell_id: tuple):
         if not self.model.gameover:
             self.model.mark_cell(cell_id)
+        if self.model.gameover:
+            self.stop_game()
+
+    def stop_game(self):
+        self.view.topmenu.demine_timer.stop()
+        print('Controller: stop timer')
 
     def act_restart_game(self):
         self.model.init_game(cfg.FIELD_ROWNUM, cfg.FIELD_COLNUM, cfg.NUM_OF_MINES)
@@ -50,6 +58,4 @@ class MineSweeperController:
     def start_game(self):
         self.model.was_no_moves = False
         self.model.place_mines()
-        # self.view.topmenu.timer_start()
-
-
+        self.view.topmenu.demine_timer.start()

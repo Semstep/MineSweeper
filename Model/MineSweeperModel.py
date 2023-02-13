@@ -104,7 +104,6 @@ class MineSweepModel:
         self.init_game(cfg.FIELD_ROWNUM, cfg.FIELD_COLNUM, cfg.NUM_OF_MINES)
         self._observers = []
 
-
     def init_game(self, rows_num, cols_num, mines_num):
         self.nrows, self.ncols, self.mines_num = rows_num, cols_num, mines_num
         self.mines_remain = self.mines_num
@@ -117,7 +116,6 @@ class MineSweepModel:
             self.minefield.append(minefield_row)
         self.was_no_moves = True
 
-        # self._init_field()
         self.is_win, self.gameover = False, False
 
     def place_mines(self):
