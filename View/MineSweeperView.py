@@ -1,3 +1,4 @@
+import logging
 import os
 
 from kivy.lang import Builder
@@ -16,6 +17,8 @@ from Utility.observer import Observer
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "MineSweeperScreen.kv"))
 
+logger = logging.getLogger('slave.'+__name__)
+
 
 class DemineTimer(Label):
     event_onesecond = ObjectProperty()
@@ -28,7 +31,8 @@ class DemineTimer(Label):
     def stop(self):
         if self.event_onesecond:
             self.event_onesecond.cancel()
-            print('View: Timer stopped')
+            logger.info(f'Timer stopped at {self.timer_ctr} s')
+            # print('View: Timer stopped')
 
     def update(self, dt):
         self.timer_ctr += 1
@@ -75,7 +79,7 @@ class MineField(GridLayout):
         for row in gamefield:
             for cell in row:
                 self.add_widget(FieldCell(cell))
-        print('field widget created')
+        logger.info(f'Field widget created. {self.rows}:{self.cols}')
 
     def refresh(self, is_looser=False):
         ctr = 0
@@ -101,7 +105,8 @@ class MineField(GridLayout):
                 else:
                     if cell.model_cell.has_mine:
                         cell.text = 'X'
-        print('View: refreshed', ctr)
+        ctr += 1
+        logger.debug(f'Field refreshed {ctr} times')
 
     def reset(self):
         for widg in self.children[:]:
@@ -140,7 +145,7 @@ class MineSweepScreen(Observer, BoxLayout):
         self.minefield.refresh()
         self.topmenu.minecnt.text = str(self.model.mines_remain)
         if self.model.gameover:
-            print('---------GAMOVER------------')
+            logger.info(f'Game Overed: player is {"winner" if self.model.is_win else "looser"}')
             if self.model.is_win:
                 self.topmenu.gamestatus.text = 'КРОСАВЧЕГ'
             else:

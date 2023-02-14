@@ -7,7 +7,9 @@
 # inheriting which, the `model_is_changed` method must be overridden.
 import MineSwConfig as cfg
 from random import sample
+import logging
 
+logger = logging.getLogger('slave.'+__name__)
 
 class Cell:
     _statuses = ['opened', 'closed', 'flagged', 'quested']  # закрыта, открыта, с флажком, с вопросиком
@@ -169,7 +171,7 @@ class MineSweepModel:
                         return False
                     if cell.status in ('closed', 'quested'):
                         return False
-            print('Model: win detected')
+            logger.info('Model: win detected')
             self.gameover = self.is_win = True
 
     def mark_cell(self, cell_id):
@@ -181,7 +183,7 @@ class MineSweepModel:
         elif prevstate != 'flagged' and state == 'flagged':
             self.mines_remain -= 1
         self.test_win()
-        print('Model: Marked', *cell_id)
+        logger.debug(f'Marked {cell_id}')
 
         self.notify_observers()
 
