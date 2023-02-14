@@ -1,6 +1,9 @@
 from View.MineSweeperView import MineSweepScreen
 from Model.MineSweeperModel import MineSweepModel
 import MineSwConfig as cfg
+import logging
+
+logger = logging.getLogger('slave.'+__name__)
 
 
 class MineSweeperController:
@@ -49,7 +52,8 @@ class MineSweeperController:
 
     def stop_game(self):
         self.view.topmenu.demine_timer.stop()
-        print('Controller: stop timer')
+        # print('Controller: stop timer')
+        logger.debug('Timer stopped')
 
     def act_restart_game(self):
         self.model.init_game(cfg.FIELD_ROWNUM, cfg.FIELD_COLNUM, cfg.NUM_OF_MINES)

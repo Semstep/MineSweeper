@@ -1,0 +1,25 @@
+disable_existing_loggers: True
+version: 1
+formatters:
+    simple:
+      format: '%(asctime)s | %(name)s | %(levelname)8s | %(message)s'
+    cons:
+      format: '%(filename)s | %(levelname)8s | %(message)s'
+handlers:
+    console:
+      class: logging.StreamHandler
+      level: DEBUG
+      formatter: cons
+      stream: ext://sys.stdout
+loggers:
+    default:
+      level: DEBUG
+      handlers: [console]
+      propagate: yes
+    slave:
+      level: DEBUG
+      handlers: [console]
+      propagate: yes
+root:
+    level: DEBUG
+    handlers: [console]

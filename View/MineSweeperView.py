@@ -13,16 +13,15 @@ import Model.MineSweeperModel
 from Controller import MineSweeperController
 from Utility.observer import Observer
 
+
 Builder.load_file(os.path.join(os.path.dirname(__file__), "MineSweeperScreen.kv"))
 
 
 class DemineTimer(Label):
-    # controller = ObjectProperty()
     event_onesecond = ObjectProperty()
     timer_ctr = NumericProperty
 
     def start(self):
-        print('timer_started')
         self.timer_ctr = 0
         self.event_onesecond = Clock.schedule_interval(self.update, 1)
 

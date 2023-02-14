@@ -7,10 +7,7 @@
 # inheriting which, the `model_is_changed` method must be overridden.
 import MineSwConfig as cfg
 from random import sample
-from pprint import pprint
-import logging
 
-logging.basicConfig(level=logging.DEBUG)
 
 class Cell:
     _statuses = ['opened', 'closed', 'flagged', 'quested']  # закрыта, открыта, с флажком, с вопросиком
@@ -66,7 +63,6 @@ class Cell:
     def open(self):
         if self.status != 'flagged':
             self.status = 'opened'
-            logging.debug(f'Model: Opened {self}')
             return True
         return False
 
