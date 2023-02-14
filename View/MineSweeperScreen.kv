@@ -11,6 +11,7 @@
     minecnt: minecnt
     gamestatus: gamestatus
     demine_timer: demine_timer
+    butim: butim
     orientation: 'horizontal'
     canvas.before:
         Color:
@@ -20,19 +21,17 @@
             pos: self.pos
     size_hint_y: None
     height: (dp(40))
-#    Button:
-    Image:
-        source: 'assets/config_ico.png'
-#            size: root.size
-#            x: root.pos[0]
-        y: root.pos[1] - root.height
-#            allow_stretch: False
-#            keep_ratio: True
+    Button:
+        id: bwi
+        on_press: print(self.size, self.pos, butim.size, butim.pos)
+        size_hint_x: None
+        width: self.height
+        Image:
+            id: butim
+            source: 'assets/config_ico.png'
+            center_x: self.parent.center_x
+            center_y: self.parent.center_y
 
-#            y: root.y
-#            x: root.x
-#        size_hint_x: None
-#        width: self.height * 2
     Button:
         id: minecnt
     Button:

@@ -8,6 +8,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.clock import Clock
+from kivy.uix.popup import Popup
 from pprint import pprint
 
 import Model.MineSweeperModel
@@ -32,7 +33,6 @@ class DemineTimer(Label):
         if self.event_onesecond:
             self.event_onesecond.cancel()
             logger.info(f'Timer stopped at {self.timer_ctr} s')
-            # print('View: Timer stopped')
 
     def update(self, dt):
         self.timer_ctr += 1

@@ -1,6 +1,4 @@
 FORM_BG_COLOR = (0, 0, .15)
-FIELD_X_SIZE = 10
-FIELD_Y_SIZE = 10
 
 TOP_BG_COLOR = (.1, .1, .1)
 FIELD_BG_COLOR = (.3, .3, .3)

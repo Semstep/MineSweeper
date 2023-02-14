@@ -51,9 +51,8 @@ class MineSweeperController:
             self.stop_game()
 
     def stop_game(self):
-        # self.view.topmenu.demine_timer.stop()
-        # logger.debug('Timer stopped')
-        ...
+        self.view.topmenu.demine_timer.stop()
+        logger.debug('Timer stopped')
 
     def act_restart_game(self):
         self.model.init_game(cfg.FIELD_ROWNUM, cfg.FIELD_COLNUM, cfg.NUM_OF_MINES)
