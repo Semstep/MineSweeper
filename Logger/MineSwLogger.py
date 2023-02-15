@@ -12,15 +12,15 @@ def config():
         LOG_CONF = yaml.safe_load(cf.read())
 
     logging.config.dictConfig(LOG_CONF)
-    logger = logging.getLogger('slave.'+__name__)
-    logger.setLevel(logging.DEBUG)
-    logger.info(f'Logger was configured')
+    lgr = logging.getLogger('slave.' + __name__)
+    lgr.setLevel(logging.DEBUG)
+    lgr.info(f'Logger was configured')
 
 
 if __name__ == '__main__':
-    # logger.debug('Debug mess')
-    # logger.info('Some info')
-    # logger.warning('Stay warned!')
-    # logger.error('Some error occured!!')
-    # logger.critical('We dropped everything at all, Natasha'.upper())
+    # lgr.debug('Debug mess')
+    # lgr.info('Some info')
+    # lgr.warning('Stay warned!')
+    # lgr.error('Some error occured!!')
+    # lgr.critical('We dropped everything at all, Natasha'.upper())
     ...

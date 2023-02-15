@@ -9,7 +9,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.clock import Clock
 from kivy.uix.popup import Popup
-from pprint import pprint
+
 
 import Model.MineSweeperModel
 from Controller import MineSweeperController
@@ -18,8 +18,7 @@ from Utility.observer import Observer
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "MineSweeperScreen.kv"))
 
-logger = logging.getLogger('slave.'+__name__)
-
+lgr = logging.getLogger('slave.' + __name__)
 
 class DemineTimer(Label):
     event_onesecond = ObjectProperty()
@@ -32,7 +31,7 @@ class DemineTimer(Label):
     def stop(self):
         if self.event_onesecond:
             self.event_onesecond.cancel()
-            logger.info(f'Timer stopped at {self.timer_ctr} s')
+            lgr.info(f'Timer stopped at {self.timer_ctr} s')
 
     def update(self, dt):
         self.timer_ctr += 1
@@ -60,15 +59,42 @@ class FieldCell(Button):
             self.parent.controller.act_markcell(self.model_cell.yx)
 
 
+class SettingsPopup(Popup):
+    cust_sett_block = ObjectProperty()
+    lvl = StringProperty()
+    wdth = StringProperty()
+    hgth = StringProperty()
+    mns = StringProperty()
+
+    def sett_pressed(self, lvl):
+        lgr.info(f'Level changes to {lvl}')
+        self.lvl = lvl
+        if self.lvl != 'custom':
+            self.cust_sett_block.opacity = 0
+        else:
+            self.cust_sett_block.opacity = 1
+
+    def on_dismiss(self):
+        ...
+    # def show_custom(self):
+
+
 class TopMenu(BoxLayout):
     controller: MineSweeperController = ObjectProperty()
     minecnt = ObjectProperty()
     gamestatus = ObjectProperty()
     demine_timer = ObjectProperty()
+    settings_butt = ObjectProperty()
+    settings_window = ObjectProperty()
 
     def reset(self):
         self.demine_timer.reset()
         self.gamestatus.text = ''
+
+    def show_settings(self):
+        self.settings_window = SettingsPopup()
+        self.settings_window.open()
+        lgr.debug('Show settings window')
 
 
 class MineField(GridLayout):
@@ -79,7 +105,7 @@ class MineField(GridLayout):
         for row in gamefield:
             for cell in row:
                 self.add_widget(FieldCell(cell))
-        logger.info(f'Field widget created. {self.rows}:{self.cols}')
+        lgr.info(f'Field widget created. {self.rows}:{self.cols}')
 
     def refresh(self, is_looser=False):
         ctr = 0
@@ -106,7 +132,7 @@ class MineField(GridLayout):
                     if cell.model_cell.has_mine:
                         cell.text = 'X'
         ctr += 1
-        logger.debug(f'Field refreshed {ctr} times')
+        lgr.debug(f'Field refreshed {ctr} times')
 
     def reset(self):
         for widg in self.children[:]:
@@ -145,7 +171,7 @@ class MineSweepScreen(Observer, BoxLayout):
         self.minefield.refresh()
         self.topmenu.minecnt.text = str(self.model.mines_remain)
         if self.model.gameover:
-            logger.info(f'Game Overed: player is {"winner" if self.model.is_win else "looser"}')
+            lgr.info(f'Game Overed: player is {"winner" if self.model.is_win else "looser"}')
             if self.model.is_win:
                 self.topmenu.gamestatus.text = 'КРОСАВЧЕГ'
             else:

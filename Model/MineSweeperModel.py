@@ -9,7 +9,7 @@ import MineSwConfig as cfg
 from random import sample
 import logging
 
-logger = logging.getLogger('slave.'+__name__)
+lgr = logging.getLogger('slave.' + __name__)
 
 class Cell:
     _statuses = ['opened', 'closed', 'flagged', 'quested']  # закрыта, открыта, с флажком, с вопросиком
@@ -171,7 +171,7 @@ class MineSweepModel:
                         return False
                     if cell.status in ('closed', 'quested'):
                         return False
-            logger.info('Model: win detected')
+            lgr.info('Model: win detected')
             self.gameover = self.is_win = True
 
     def mark_cell(self, cell_id):
@@ -183,7 +183,7 @@ class MineSweepModel:
         elif prevstate != 'flagged' and state == 'flagged':
             self.mines_remain -= 1
         self.test_win()
-        logger.debug(f'Marked {cell_id}')
+        lgr.debug(f'Marked {cell_id}')
 
         self.notify_observers()
 

@@ -1,4 +1,4 @@
-disable_existing_loggers: True
+disable_existing_loggers: False
 version: 1
 formatters:
     simple:
@@ -17,7 +17,7 @@ loggers:
       handlers: [console]
       propagate: yes
     slave:
-      level: INFO
+      level: DEBUG
       handlers: [console]
       propagate: yes
 root:

@@ -4,14 +4,105 @@
     color: 1,0,0
     text: '000'
 
-<MenuButton>
+<MenuButton@ToggleButton>
+    group: '1'
+    allow_no_selection: False
+
+<BBoxLayout@BoxLayout+Border>
+<B2BoxLayout@BoxLayout+Border2>
+
+<CaptTextInput@BoxLayout>
+    capt: lbl.text
+    res: ti.text
+    orientation: 'vertical'
+    Label:
+        id: lbl
+        text: root.capt
+    TextInput:
+        id: ti
+        text: root.res
+
+#<CaptTextInput@BoxLayout>
+#    capt: lbl.text
+#    inp: ti.text
+#    orientation: 'vertical'
+#    padding: dp(5)
+#    Label:
+#        id: lbl
+#        text: root.capt
+#        size_hint_y: None
+#        height: self.texture_size[1]
+#    TextInput:
+#        id: ti
+##        font_size: dp(20)
+#        bold: True
+#        text: root.inp
+
+<SettingsPopup>
+    cust_sett_block: cust_sett_block
+    id: settpopup
+    title: 'Настройки'
+    auto_dismiss: False
+    size_hint: .7, .7
+    on_dismiss: print('Dismissed')
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: dp(10)
+        halign: 'center'
+
+        B2BoxLayout:
+            padding: dp(10)
+            orientation: 'vertical'
+            size_hint_y: .7
+            MenuButton:
+                text: 'Новичек'
+                on_state: if self.state == 'down': root.sett_pressed('newbie')
+            MenuButton:
+                text: 'Любитель'
+                on_state: if self.state == 'down': root.sett_pressed('amateur')
+            MenuButton:
+                text: 'Профессионал'
+                on_state: if self.state == 'down': root.sett_pressed('profi')
+            MenuButton:
+                text: 'Настроить'
+                group: '1'
+                on_state: if self.state == 'down': root.sett_pressed('custom')
+        B2BoxLayout:
+            id: cust_sett_block
+            size_hint_y: .2
+            opacity: 0
+            CaptTextInput:
+                id: hgth_ti
+                capt: 'Ширина'
+                res: '10'
+            CaptTextInput:
+                id: wdth_ti
+                capt: 'Высота'
+                res: '10'
+            CaptTextInput:
+                id: mns_ti
+                capt: 'Количество мин'
+                res: '22'
+        B2BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+#            height: dp(180)
+            padding: dp(40), dp(5)
+            Button:
+                id: pb_ok
+                text: 'Зокрыть'
+                on_release: root.dismiss()
+            Button:
+                id: pb_cancel
+                text: 'Зокрыть'
 
 
 <TopMenu>
     minecnt: minecnt
     gamestatus: gamestatus
     demine_timer: demine_timer
-    butim: butim
+    settings_butt: settings_butt
     orientation: 'horizontal'
     canvas.before:
         Color:
@@ -22,12 +113,12 @@
     size_hint_y: None
     height: (dp(40))
     Button:
-        id: bwi
-        on_press: print(self.size, self.pos, butim.size, butim.pos)
+        id: settings_butt
+#        on_press: print(self.size, self.pos, butim.size, butim.pos)
+        on_press: root.show_settings()
         size_hint_x: None
         width: self.height
         Image:
-            id: butim
             source: 'assets/config_ico.png'
             center_x: self.parent.center_x
             center_y: self.parent.center_y
@@ -62,4 +153,23 @@
     TopMenu:
     MineField:
 
+<Border@Widget>
+    canvas:
+        Color:
+            rgb: (1, 1, 0)
+        Line:
+            rectangle: (self.x, self.y, self.width, self.height)
 
+<Border2@Widget>
+    canvas:
+        Color:
+            rgb: (0,1,1)
+        Line:
+            rectangle: (self.x+1, self.y+1, self.width-2, self.height-2)
+
+<Border3@Widget>
+    canvas:
+        Color:
+            rgb: (1,0,1)
+        Line:
+            rectangle: (self.x+1, self.y+1, self.width-2, self.height-2)
